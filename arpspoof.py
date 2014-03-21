@@ -15,7 +15,7 @@ parser = OptionParser(usage)
 parser.add_option('-i', dest='interface', help='Specify the interface to use')
 parser.add_option('-t', dest='target', help='Specify a particular host to ARP poison')
 parser.add_option('-m', dest='mode', default='req', help='Poisoning mode: requests (req) or replies (rep) [default: %default]')
-parser.add_option('-c', action='store_true', dest='confirmation', default=False, help='Show packet summary and ask for confirmation before poisoning')
+parser.add_option('-s', action='store_true', dest='summary', default=False, help='Show packet summary and ask for confirmation before poisoning')
 (options, args) = parser.parse_args()
 
 if len(args) != 1 or options.interface == None:
@@ -63,7 +63,7 @@ if options.mode == 'req':
 elif options.mode == 'rep':
 	pkt = build_rep()
 
-if options.confirmation == True:
+if options.summary == True:
 	pkt.show()
 	ans = raw_input('\n[*] Continue? [Y|n]: ').lower()
 	if ans == 'y' or len(ans) == 0:
