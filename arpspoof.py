@@ -22,8 +22,9 @@ if len(args) != 1 or options.interface == None:
 	parser.print_help()
 	sys.exit(0)
 
+mac = get_if_hwaddr(options.interface)
+
 def build_req():
-	mac = get_if_hwaddr(options.interface)
 	if options.target == None:
 		pkt = Ether(src=mac, dst='ff:ff:ff:ff:ff:ff')/ARP(hwsrc=mac, psrc=args[0], pdst=args[0])
 	elif options.target:
@@ -37,7 +38,6 @@ def build_req():
 
 
 def build_rep():
-	mac = get_if_hwaddr(options.interface)
 	if options.target == None:
 		pkt = Ether(src=mac, dst='ff:ff:ff:ff:ff:ff')/ARP(hwsrc=mac, psrc=args[0], op=2)
 	elif options.target:
