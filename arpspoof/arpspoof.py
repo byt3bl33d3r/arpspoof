@@ -18,7 +18,7 @@ logging.getLogger("scapy.runtime").setLevel(logging.ERROR)  # Gets rid of IPV6 E
 
 def main():
     if os.geteuid() != 0:
-        print "[-] Run me as root"
+        print("[-] Run me as root")
         sys.exit(1)
 
     usage = 'Usage: %prog [-i interface] [-t target] host'
@@ -43,7 +43,7 @@ def main():
         elif options.target:
             target_mac = getmacbyip(target)
             if target_mac is None:
-                print "[-] Error: Could not resolve targets MAC address"
+                print("[-] Error: Could not resolve targets MAC address")
                 sys.exit(1)
             pkt = Ether(src=mac, dst=target_mac) / ARP(hwsrc=mac, psrc=host, hwdst=target_mac, pdst=target)
 
@@ -55,7 +55,7 @@ def main():
         elif target:
             target_mac = getmacbyip(target)
             if target_mac is None:
-                print "[-] Error: Could not resolve targets MAC address"
+                print("[-] Error: Could not resolve targets MAC address")
                 sys.exit(1)
             pkt = Ether(src=mac, dst=target_mac) / ARP(hwsrc=mac, psrc=host, hwdst=target_mac, pdst=target, op=2)
 
@@ -63,7 +63,7 @@ def main():
 
     def rearp(signal, frame):
         sleep(1)
-        print '\n[*] Re-arping network'
+        print('\n[*] Re-arping network')
         rearp_mac = getmacbyip(host)
         pkt = Ether(src=rearp_mac, dst='ff:ff:ff:ff:ff:ff') / ARP(psrc=host, hwsrc=mac, op=2)
         sendp(pkt, inter=1, count=5, iface=options.interface)
@@ -99,3 +99,6 @@ def main():
         sendp(pkt, inter=2, iface=options.interface)
         if options.reverse:
             sendp(r_pkt, inter=2, iface=options.interface)
+
+if __name__ == "__main__":
+    main()
